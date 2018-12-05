@@ -1,10 +1,11 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class assn6 {
     public static void main(String[] args) throws IOException {
         ArrayList<Integer> blockTimes = new ArrayList<>();
-        System.out.println("Assignment 6 by Isaiah Larsen");
+        System.out.println("Assignment 6: Block Access Algorithms\nBy: Isaiah Larsen\n");
         String[] dataArray;
         String data;
         if(args.length > 0) {
@@ -29,9 +30,18 @@ public class assn6 {
             }
 
         }
-        System.out.println(blockTimes.toString());
+
+        System.out.printf("FCFS Total Seek: ");
         firstComeFirstServe(blockTimes);
+
+        System.out.printf("SSTF Total Seek: ");
         shortestSeekFirst(blockTimes);
+
+        System.out.printf("LOOK Total Seek: ");
+        nonCircularLook(blockTimes);
+
+        System.out.printf("C-LOOK Total Seek: ");
+        cLook(blockTimes);
 
     }
     public static void printResults(int result){
@@ -42,7 +52,6 @@ public class assn6 {
         for(int i = 0; i < data.size() - 1; i++){
             totalTime += Math.abs(data.get(i) - data.get(i + 1));
         }
-        System.out.printf("FCFS Total Seek time: ");
         printResults(totalTime);
     }
 
@@ -69,17 +78,62 @@ public class assn6 {
             }//reset difference
             difference = 1000000;
         }
-        System.out.printf("SSTF Total seek: ");
         printResults(totalTime);
 
     }
 
-    public void nonCircularLook(ArrayList data){
+    public static void nonCircularLook(ArrayList<Integer> data){
+        ArrayList<Integer> d = new ArrayList<>();
+        ArrayList<Integer> shortList = new ArrayList<>();
+        d.addAll(data);
+        int temp = 0;
+        int currentTime = d.get(0);
+
+        //trim anything smaller than starting point
+        for(int i = 0; i < d.size(); i++){
+            if(d.get(i) < currentTime){
+                temp = d.get(i);
+                d.remove(i);
+                i--;
+                shortList.add(temp);
+            }
+        }
+        //sort Arrays
+        Collections.sort(d);
+        Collections.sort(shortList);
+        //reverse the lower nums
+        Collections.reverse(shortList);
+        //add short nums back on original array in descending order
+        d.addAll(shortList);
+        //then just FCFS
+        firstComeFirstServe(d);
+
 
     }
 
-    public void look(ArrayList data){
+    public static void cLook(ArrayList data){
+        ArrayList<Integer> d = new ArrayList<>();
+        ArrayList<Integer> shortList = new ArrayList<>();
+        d.addAll(data);
+        int temp = 0;
+        int currentTime = d.get(0);
 
+        //trim anything smaller than starting point
+        for(int i = 0; i < d.size(); i++){
+            if(d.get(i) < currentTime){
+                temp = d.get(i);
+                d.remove(i);
+                i--;
+                shortList.add(temp);
+            }
+        }
+        //sort Arrays
+        Collections.sort(d);
+        Collections.sort(shortList);
+        //add short nums back on original array in descending order
+        d.addAll(shortList);
+        //then just FCFS
+        firstComeFirstServe(d);
     }
 
 
